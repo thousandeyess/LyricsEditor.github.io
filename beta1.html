@@ -14,20 +14,20 @@
             align-items: center;
         }
         h1 {
-            margin-top: 20px; /* Añade separación entre el título y el GIF */
+            margin-top: 20px;
         }
         .developer-info {
-            margin-top: 5px; /* Ajusta el margen superior para separar del GIF */
+            margin-top: 5px;
             font-size: 10px;
         }
         .container {
             display: flex;
             justify-content: space-between;
             width: 80%;
-            margin-top: 20px; /* Añade separación entre el título y las cajas */
+            margin-top: 20px;
         }
         textarea, .output-box {
-            width: 45%; /* Mismo ancho para ambas cajas */
+            width: 45%;
             font-family: 'Programme', monospace;
         }
         textarea {
@@ -41,7 +41,7 @@
             border: 1px solid #ccc;
             padding: 10px;
             border-radius: 5px;
-            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Agrega una sombra suave */
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         }
         .output-box {
             display: flex;
@@ -51,7 +51,7 @@
             width: 50%;
             margin-bottom: 10px;
             margin-left: 10px;
-            background-color: #f5f5f5; /* Cambia al color que prefieras */
+            background-color: #f5f5f5;
             border: 1px solid #ddd;
             border-radius: 5px;
             padding: 10px;
@@ -79,15 +79,15 @@
             padding: 5px 7px;
             margin-right: 10px;
             font-size: 16px;
-            border: 2px solid #007bff; /* Cambia el color del borde */
+            border: 2px solid #007bff;
             border-radius: 5px;
             cursor: pointer;
-            background-color: #007bff; /* Cambia el color de fondo */
-            color: #fff; /* Cambia el color del texto */
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* Añade transición al color de fondo, texto y borde */
+            background-color: #007bff;
+            color: #fff;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
         }
         .button-container button:hover {
-            background-color: #006080; /* Cambia al color que prefieras */
+            background-color: #006080;
         }
 
     </style>
@@ -95,7 +95,7 @@
 <body>
 
     <h1>Lyrics Editor</h1>
-    <img src="https://github.com/thousandeyess/LyricsEditor.github.io/blob/0e268a47ecaa297ea34d9bbe6764a620c6d042ff/Untitled%20design-4.gif" alt="GIF" style="border-radius: 50%; margin-top: 10px; width: 40px; height: 40px;">
+    <img src="https://media.discordapp.net/attachments/1045929967231447040/1211856553632862268/Untitled_design-4.gif" alt="GIF" style="border-radius: 50%; margin-top: 10px; width: 40px; height: 40px;">
     <div class="developer-info">
         <p>Developed by @thousandeyes</p>
     </div>
@@ -127,19 +127,15 @@
                 verse = capitalizeFirstLetter(verse);
                 verse = replaceKeywords(verse);
                 verse = replaceParentheses(verse);
-                 // Call the new function to replace keywords
                 return verse;
             }).join('\n');
-
-            // Escapar los caracteres '<' y '>' para que se muestren como texto normal
             processedText = processedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
             var outputElement = document.getElementById("output");
-            outputElement.innerHTML = processedText; // Mostrar el texto procesado sin aplicar formato especial
+            outputElement.innerHTML = processedText; 
         }
 
-        var previewActive = false; // Variable para rastrear si la vista previa está activa
-
+        var previewActive = false;
         function previewText() {
             if (!previewActive) {
                 var inputText = document.getElementById("input").value;
@@ -150,15 +146,11 @@
                     }
                     verse = verse.replace(/[’´]/g, "'");
                     verse = capitalizeFirstLetter(verse);
-                    verse = replaceKeywords(verse); // Llama a la nueva función para reemplazar palabras clave
-                    verse = replaceParentheses(verse); // Llama a la nueva función para reemplazar paréntesis
-
-                    // Colorear el texto dentro de los corchetes de azul y manejar casos de corchetes sin cerrar o sin abrir
+                    verse = replaceKeywords(verse);
+                    verse = replaceParentheses(verse);
                     verse = verse.replace(/\[(.*?)\]\((\d+)\)/g, function(match, p1, p2) {
                         var innerText = p1.replace(/\[(.*?)\]\((\d+)\)|\[(\d+)\](?![\w\]])/g, function(innerMatch, p1, p2) {
-                            // Conservar palabras clave dentro de los corchetes
                             if (/(Verse|Chorus|Refrain|Bridge|Breakdown|Intro|Outro|Skit|Pre-Chorus|Post-Chorus|Instrumental Break)/.test(p1)) {
-                                // Eliminar corchetes, números y paréntesis dentro de las palabras clave
                                 return p1.replace(/\[|\]|\(|\)|\d+/g, '');
                             } else {
                                 return '<span style="color: #063970;">' + p1 + '</span>';
@@ -175,8 +167,6 @@
                 }
             });
                     verse = verse.replace(/\](\(\d+\))/g, '');
-
-                    // Eliminar corchetes sin cerrar al final de un verso
                     verse = verse.replace(/\[(?![^\[\]]*\])/g, '').replace(/(?<![^\[\]]*)\]/g, '');
 
                     return verse;
@@ -185,50 +175,43 @@
                 var outputElement = document.getElementById("output");
                 outputElement.innerHTML = outputText;
 
-                previewActive = true; // Marca la vista previa como activa
+                previewActive = true;
             } else {
-                // Restaura el texto original y desactiva la vista previa
                 var inputText = document.getElementById("input").value;
                 var outputElement = document.getElementById("output");
-                outputElement.innerHTML = inputText; // Restaura el texto original
-                previewActive = false; // Marca la vista previa como desactivada
+                outputElement.innerHTML = inputText;
+                previewActive = false;
             }
         }
-
-
+        
         function replaceKeywords(verse) {
             var keywordsRegex = /(Verse|Chorus|Refrain|Bridge|Breakdown|Intro|Outro|Skit|Pre-Chorus|Post-Chorus|Instrumental Break)/g;
             return verse.replace(keywordsRegex, function(match) {
                 return match;
             });
         }
-
+        
         function replaceParentheses(verse) {
             var parenthesesRegex = /\((Verse|Chorus|Refrain|Bridge|Breakdown|Intro|Outro|Skit|Pre-Chorus|Post-Chorus|Instrumental Break)\)/g;
             return verse.replace(parenthesesRegex, '[$1]');
         }
 
         function copyText() {
-            // Utiliza el texto procesado por checkText()
             var outputText = processedText;
             if(outputText.trim() === "") {
                 alert("No lyrics to copy.");
                 return;
             }
-            // Revertir los caracteres escapados a su forma original
             outputText = outputText.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
-            // Crear un elemento temporal para copiar al portapapeles
             var tempElement = document.createElement('textarea');
             tempElement.value = outputText;
-            tempElement.setAttribute('readonly', ''); // Para mantener el formato de los saltos de línea
+            tempElement.setAttribute('readonly', ''); 
             tempElement.style.position = 'absolute';
-            tempElement.style.left = '-9999px'; // Mover el elemento fuera del área visible
+            tempElement.style.left = '-9999px';
             document.body.appendChild(tempElement);
             tempElement.focus();
             tempElement.select();
-            // Ejecutar el comando de copiado
             document.execCommand('copy');
-            // Eliminar el elemento temporal
             document.body.removeChild(tempElement);
             alert("Text copied to clipboard.");
         }
@@ -238,12 +221,9 @@
         }
 
         function capitalizeFirstLetter(string) {
-            // Capitalizar la primera palabra de la cadena
             string = string.replace(/^\w/, function(match) {
                 return match.toUpperCase();
             });
-
-            // Capitalizar la primera palabra dentro de corchetes o paréntesis
             return string.replace(/(\[|\()(.*?)(\]|\))/g, function(match, p1, p2, p3) {
                 return p1 + p2.charAt(0).toUpperCase() + p2.slice(1) + p3;
             });
