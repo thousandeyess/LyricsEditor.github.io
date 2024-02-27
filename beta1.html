@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lyrics Editor</title>
+    <style>
+        body {
+            font-family: 'Programme', monospace;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative; /* Añadido para posicionar el aura */
+        }
+        h1 {
+            margin-top: 20px; /* Añade separación entre el título y el GIF */
+        }
+        .developer-info {
+            margin-top: 5px; /* Ajusta el margen superior para separar del GIF */
+            font-size: 10px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            width: 80%;
+            margin-top: 20px; /* Añade separación entre el título y las cajas */
+        }
+        textarea, .output-box {
+            width: 45%; /* Mismo ancho para ambas cajas */
+            font-family: 'Programme', monospace;
+        }
+        textarea {
+            width: 50%;
+            min-height: 200px;
+            margin-bottom: 10px;
+            font-family: 'Programme', monospace;
+            resize: none;
+            overflow: auto;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Agrega una sombra suave */
+        }
+        .output-box {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: space-between;
+            width: 50%;
+            margin-bottom: 10px;
+            margin-left: 10px;
+            background-color: #f5f5f5; /* Cambia al color que prefieras */
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+        }
+        #output {
+            margin: 0;
+            padding: 0;
+            font-family: 'Programme', monospace;
+            white-space: pre-wrap;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            color: #000;
+        }
+        .button-container {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            border-radius: 5px 5px 0 0;
+            margin-top: 20px;
+        }
+        .button {
+            padding: 5px 7px;
+            margin-right: 10px;
+            font-size: 16px;
+            border: 2px solid #007bff; /* Cambia el color del borde */
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff; /* Cambia el color de fondo */
+            color: #fff; /* Cambia el color del texto */
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* Añade transición al color de fondo, texto y borde */
+        }
+        .button-container button:hover {
+            background-color: #006080; /* Cambia al color que prefieras */
+        }
+
+    </style>
+</head>
+<body> <!-- Esta línea agrega el efecto de aura -->
+
+    <h1>Lyrics Editor</h1>
+    <img src="/Users/diegomontoya/Downloads/Untitled design-4.gif" alt="GIF" style="border-radius: 50%; margin-top: 10px; width: 40px; height: 40px;">
+    <div class="developer-info">
+        <p>Developed by @thousandeyes</p>
+    </div>
+    <div class="container">
+        <textarea id="input" placeholder="Transcribe here!" oninput="checkText()"></textarea>
+        <div class="output-box">
+            <p id="output"></p>
+        </div>
+    </div>
+    <div class="button-container">
+        <button onclick="copyText()" class="button">Copy lyrics</button>
+        <button onclick="previewText()" class="button">Preview lyrics</button>
+        <button onclick="clearText()" class="button">Clear lyrics</button>
+    </div>
+
+    <script>
+
+        var processedText = "";
+
+        function checkText() {
+            var inputText = document.getElementById("input").value;
+            processedText = inputText.split(/\r?\n/).map(function(verse) {
+                verse = verse.replace(/&[^;]*?;/gm, '');
+                verse = verse.replace(/[.,;]$/g, '');
+                if (/[а-яА-Я]/.test(verse)) {
+                    return "Cyrillic character found";
+                }
+                verse = verse.replace(/[’´]/g, "'");
+                verse = capitalizeFirstLetter(verse);
+                verse = replaceKeywords(verse);
+                verse = replaceParentheses(verse);
+                 // Call the new function to replace keywords
+                return verse;
+            }).join('\n');
+
+            // Escapar los caracteres '<' y '>' para que se muestren como texto normal
+            processedText = processedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+            var outputElement = document.getElementById("output");
+            outputElement.innerHTML = processedText; // Mostrar el texto procesado sin aplicar formato especial
+        }
+
+        var previewActive = false; // Variable para rastrear si la vista previa está activa
+
+        function previewText() {
+            if (!previewActive) {
+                var inputText = document.getElementById("input").value;
+                var outputText = inputText.trim().split('\n').map(function(verse) {
+                    verse = verse.replace(/[.,;]$/g, '');
+                    if (/[а-яА-Я]/.test(verse)) {
+                        return "Cyrillic character found";
+                    }
+                    verse = verse.replace(/[’´]/g, "'");
+                    verse = capitalizeFirstLetter(verse);
+                    verse = replaceKeywords(verse); // Llama a la nueva función para reemplazar palabras clave
+                    verse = replaceParentheses(verse); // Llama a la nueva función para reemplazar paréntesis
+
+                    // Colorear el texto dentro de los corchetes de azul y manejar casos de corchetes sin cerrar o sin abrir
+                    verse = verse.replace(/\[(.*?)\]\((\d+)\)/g, function(match, p1, p2) {
+                        var innerText = p1.replace(/\[(.*?)\]\((\d+)\)|\[(\d+)\](?![\w\]])/g, function(innerMatch, p1, p2) {
+                            // Conservar palabras clave dentro de los corchetes
+                            if (/(Verse|Chorus|Refrain|Bridge|Breakdown|Intro|Outro|Skit|Pre-Chorus|Post-Chorus|Instrumental Break)/.test(p1)) {
+                                // Eliminar corchetes, números y paréntesis dentro de las palabras clave
+                                return p1.replace(/\[|\]|\(|\)|\d+/g, '');
+                            } else {
+                                return '<span style="color: #063970;">' + p1 + '</span>';
+                            }
+                        });
+                        return '<span style="color: #063970;">[' + innerText + '](' + p2 + ')</span>';
+                    });
+
+                    verse = verse.replace(/\[(.*?)\]\((\d+)\)|\[(\d+)\](?![\w\]])/g, function(match, p1, p2, p3) {
+                if (p1) {
+                    return p1;
+                } else if (p3) {
+                    return '';
+                }
+            });
+                    verse = verse.replace(/\](\(\d+\))/g, '');
+
+                    // Eliminar corchetes sin cerrar al final de un verso
+                    verse = verse.replace(/\[(?![^\[\]]*\])/g, '').replace(/(?<![^\[\]]*)\]/g, '');
+
+                    return verse;
+                }).join('<br>');
+
+                var outputElement = document.getElementById("output");
+                outputElement.innerHTML = outputText;
+
+                previewActive = true; // Marca la vista previa como activa
+            } else {
+                // Restaura el texto original y desactiva la vista previa
+                var inputText = document.getElementById("input").value;
+                var outputElement = document.getElementById("output");
+                outputElement.innerHTML = inputText; // Restaura el texto original
+                previewActive = false; // Marca la vista previa como desactivada
+            }
+        }
+
+
+        function replaceKeywords(verse) {
+            var keywordsRegex = /(Verse|Chorus|Refrain|Bridge|Breakdown|Intro|Outro|Skit|Pre-Chorus|Post-Chorus|Instrumental Break)/g;
+            return verse.replace(keywordsRegex, function(match) {
+                return match;
+            });
+        }
+
+        function replaceParentheses(verse) {
+            var parenthesesRegex = /\((Verse|Chorus|Refrain|Bridge|Breakdown|Intro|Outro|Skit|Pre-Chorus|Post-Chorus|Instrumental Break)\)/g;
+            return verse.replace(parenthesesRegex, '[$1]');
+        }
+
+        function copyText() {
+            // Utiliza el texto procesado por checkText()
+            var outputText = processedText;
+            if(outputText.trim() === "") {
+                alert("No lyrics to copy.");
+                return;
+            }
+            // Revertir los caracteres escapados a su forma original
+            outputText = outputText.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+            // Crear un elemento temporal para copiar al portapapeles
+            var tempElement = document.createElement('textarea');
+            tempElement.value = outputText;
+            tempElement.setAttribute('readonly', ''); // Para mantener el formato de los saltos de línea
+            tempElement.style.position = 'absolute';
+            tempElement.style.left = '-9999px'; // Mover el elemento fuera del área visible
+            document.body.appendChild(tempElement);
+            tempElement.focus();
+            tempElement.select();
+            // Ejecutar el comando de copiado
+            document.execCommand('copy');
+            // Eliminar el elemento temporal
+            document.body.removeChild(tempElement);
+            alert("Text copied to clipboard.");
+        }
+
+        function clearText() {
+            document.getElementById("input").value = "";
+        }
+
+        function capitalizeFirstLetter(string) {
+            // Capitalizar la primera palabra de la cadena
+            string = string.replace(/^\w/, function(match) {
+                return match.toUpperCase();
+            });
+
+            // Capitalizar la primera palabra dentro de corchetes o paréntesis
+            return string.replace(/(\[|\()(.*?)(\]|\))/g, function(match, p1, p2, p3) {
+                return p1 + p2.charAt(0).toUpperCase() + p2.slice(1) + p3;
+            });
+        }
+
+    </script>
+</body>
+</html>
