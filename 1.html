@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,50 +13,92 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+            background: radial-gradient(circle, rgba(11,10,12,1), rgba(87,94,115, 1), rgba(92, 116, 156, 2));
+            background-size: 200% 200%;
+            animation: aura 15s linear infinite;
         }
+
         h1 {
             margin-top: 20px;
+            text-align: left;
         }
+
         .developer-info {
             margin-top: 5px;
             font-size: 10px;
+            text-align: left;
         }
-        .container {
+
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: ;
+    justify-content: center; 
+    background-color: #f9f9f9;
+    border-radius: 10px; /* Bordes redondeados */
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.7);
+    margin: auto; 
+    margin-top: 10vh; 
+    overflow: hidden;
+    width: 90%;
+    max-width: 800px;
+    padding: 20px;
+}
+
+        .flex-end {
             display: flex;
+            justify-content: flex-end;
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
-            width: 80%;
-            margin-top: 20px;
-        }
-        textarea, .output-box {
-            width: 45%;
-            font-family: 'Programme', monospace;
-        }
-        textarea {
-            width: 50%;
-            min-height: 200px;
+            width: 100%;
             margin-bottom: 10px;
-            font-family: 'Programme', monospace;
-            resize: none;
+        }
+
+        .column {
+            flex: 1;
+            margin-right: 10px;
+        }
+
+        .container textarea,
+        .container .output-box {
+            width: 45%;
+            height: 200px;
+        }
+
+        .container textarea {
+            margin-right: 5%;
+        }
+
+        .container .output-box {
+            margin-left: 5%;
+        }
+
+        textarea {
+            min-height: 200px;
+            resize: ;
             overflow: auto;
             background-color: #fff;
             border: 1px solid #ccc;
             padding: 10px;
             border-radius: 5px;
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            width: 90%;
         }
+
         .output-box {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            justify-content: space-between;
-            width: 50%;
-            margin-bottom: 10px;
-            margin-left: 10px;
+            min-height: 200px;
             background-color: #f5f5f5;
             border: 1px solid #ddd;
             border-radius: 5px;
             padding: 10px;
+            width: 100%;
         }
+
         #output {
             margin: 0;
             padding: 0;
@@ -64,52 +107,102 @@
             transition: background-color 0.3s ease, color 0.3s ease;
             color: #000;
         }
-        .button-container {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            padding: 10px;
-            border-top: 1px solid #ccc;
-            border-radius: 5px 5px 0 0;
-            margin-top: 20px;
+
+        .container {
+            display: ;
+            justify-content:left;
+            flex-direction: column;
         }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
         .button {
             padding: 5px 7px;
             margin-right: 10px;
             font-size: 16px;
-            border: 2px solid #007bff;
+            border: 2px solid #063970;
             border-radius: 5px;
             cursor: pointer;
-            background-color: #007bff;
+            background-color: #2e303f;
             color: #fff;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s; 
         }
         .button-container button:hover {
             background-color: #006080;
         }
 
+        .container textarea,
+        .container .output-box {
+            width: 45%;
+            height: 200px;
+        }
+
+        .container textarea {
+            margin-right: 5%;
+        }
+
+        .container .output-box {
+            margin-left: 5%;
+        }
+
+        .button-container button:hover {
+            background-color: #3f4452;
+        }
+
+        @keyframes aura {
+            0% {
+                background-position: 0% 0%;
+            }
+
+            25% {
+                background-position: 100% 0%;
+            }
+
+            50% {
+                background-position: 100% 100%;
+            }
+
+            75% {
+                background-position: 0% 100%;
+            }
+
+            100% {
+                background-position: 0% 0%;
+            }
+        }
     </style>
 </head>
-<body>
 
-    <h1>Lyrics Editor</h1>
-    <img src="https://imgur.com/j2x5RTq.gif" alt="GIF" style="border-radius: 50%; margin-top: 10px; width: 40px; height: 40px;">
-    <div class="developer-info">
-        <p>Developed by @thousandeyes</p>
-    </div>
-    <div class="container">
-        <textarea id="input" placeholder="Transcribe here!" oninput="checkText()"></textarea>
-        <div class="output-box">
-            <p id="output"></p>
+<body>
+    <div class="card rounded-lg border bg-card text-card-foreground shadow-sm w-full max-w-lg" data-v0-t="card">
+        <div class="flex-end">
+            <div class="developer-info">
+                <p>Developed by <a href="https://genius.com/thousandeyes">@thousandeyes</a></p>
+            </div>
+        </div>
+        <h1 class="font-semibold whitespace-nowrap tracking-tight text-xl">Lyrics Editor</h1>
+
+        <div class="button-container">
+            <button onclick="copyText()" class="button">Copy lyrics</button>
+            <button onclick="previewText()" class="button">Preview lyrics</button>
+            <button onclick="clearText()" class="button">Clear lyrics</button>
+        </div>
+        <div class="row">
+            <div class="column" style="flex: 1;">
+                <textarea id="input" class="min-h-[80px] w-full rounded-md border border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 h-[200px] p-4 font-mono text-sm" placeholder="Transcribe here!" oninput="checkText()"></textarea>
+            </div>
+            <div class="column" style="flex: 1;">
+                <div class="output-box">
+                    <p id="output"></p>
+                </div>
+            </div>
         </div>
     </div>
-    <div class="button-container">
-        <button onclick="copyText()" class="button">Copy lyrics</button>
-        <button onclick="previewText()" class="button">Preview lyrics</button>
-        <button onclick="clearText()" class="button">Clear lyrics</button>
-    </div>
+</body>
 
     <script>
 
