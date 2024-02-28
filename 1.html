@@ -312,17 +312,15 @@
         function clearText() {
             document.getElementById("input").value = "";
         }
-
+        
 function capitalizeFirstLetter(string) {
     string = string.replace(/^\w/, function(match) {
         return match.toUpperCase();
     });
-    return string.replace(/(\[|\()(<\/?\w+>|\(.*?\))([^<]+)/g, function(match, p1, p2, p3, p4) {
-        var capitalizedContent = p3.charAt(0).toUpperCase() + p3.slice(1);
-        return p1 + p2 + capitalizedContent;
+    return string.replace(/(\[|\()(\w)/g, function(match, p1, p2) {
+        return p1 + p2.toUpperCase();
     });
 }
-
     </script>
 </body>
 </html>
