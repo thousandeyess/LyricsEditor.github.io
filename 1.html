@@ -14,7 +14,7 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            background: radial-gradient(circle, rgba(11,10,12,1), rgba(87,94,115, 1), rgba(92, 116, 156, 2));
+            background: radial-gradient(circle, rgba(11, 10, 12, 1), rgba(87, 94, 115, 1), rgba(92, 116, 156, 2));
             background-size: 200% 200%;
             animation: aura 15s linear infinite;
         }
@@ -30,21 +30,22 @@
             text-align: left;
         }
 
-.card {
-    display: flex;
-    flex-direction: column;
-    align-items: ;
-    justify-content: center; 
-    background-color: #f9f9f9;
-    border-radius: 10px; /* Bordes redondeados */
-    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.7);
-    margin: auto; 
-    margin-top: 10vh; 
-    overflow: hidden;
-    width: 90%;
-    max-width: 800px;
-    padding: 20px;
-}
+        .card {
+            display: flex;
+            flex-direction: column;
+            align-items: ;
+            justify-content: center;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            /* Bordes redondeados */
+            box-shadow: 0 5px 5px rgba(0, 0, 0, 0.7);
+            margin: auto;
+            margin-top: 10vh;
+            overflow: hidden;
+            width: 90%;
+            max-width: 800px;
+            padding: 20px;
+        }
 
         .flex-end {
             display: flex;
@@ -81,6 +82,7 @@
         textarea {
             min-height: 200px;
             resize: ;
+            height: 200px;
             overflow: auto;
             background-color: #fff;
             border: 1px solid #ccc;
@@ -110,7 +112,7 @@
 
         .container {
             display: ;
-            justify-content:left;
+            justify-content: left;
             flex-direction: column;
         }
 
@@ -129,27 +131,10 @@
             cursor: pointer;
             background-color: #2e303f;
             color: #fff;
-            transition: background-color 0.3s, color 0.3s, border-color 0.3s; 
-        }
-        .button-container button:hover {
-            background-color: #006080;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
         }
 
-        .container textarea,
-        .container .output-box {
-            width: 45%;
-            height: 200px;
-        }
-
-        .container textarea {
-            margin-right: 5%;
-        }
-
-        .container .output-box {
-            margin-left: 5%;
-        }
-
-        .button-container button:hover {
+        .button:hover {
             background-color: #3f4452;
         }
 
@@ -202,15 +187,12 @@
             </div>
         </div>
     </div>
-</body>
-
     <script>
-
+        var originalText = "";
         var processedText = "";
 
-        function checkText() {
-            var inputText = document.getElementById("input").value;
-            processedText = inputText.split(/\r?\n/).map(function(verse) {
+        function processText(inputText) {
+            var processedText = inputText.split(/\r?\n/).map(function (verse) {
                 verse = verse.replace(/&[^;]*?;/gm, '');
                 verse = verse.replace(/[.,;]$/g, '');
                 if (/[а-яА-Я]/.test(verse)) {
@@ -223,26 +205,33 @@
                 return verse;
             }).join('\n');
             processedText = processedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return processedText;
+        }
 
+        function checkText() {
+            var inputText = document.getElementById("input").value;
+            originalText = inputText;
+            var processedText = processText(inputText);
             var outputElement = document.getElementById("output");
-            outputElement.innerHTML = processedText; 
+            outputElement.innerHTML = processedText;
         }
 
         var previewActive = false;
+
         function previewText() {
+            var inputText = document.getElementById("input").value;
+
+            // Si la vista previa está desactivada, activarla
             if (!previewActive) {
-                var inputText = document.getElementById("input").value;
-                var outputText = inputText.trim().split('\n').map(function(verse) {
+                var outputText = inputText.trim().split('\n').map(function (verse) {
                     verse = verse.replace(/[.,;]$/g, '');
-                    if (/[а-яА-Я]/.test(verse)) {
-                        return "Cyrillic character found";
-                    }
-                    verse = verse.replace(/[’´]/g, "'");
+                    if (/[а-яА-Я]/.test(verse))
+                        verse = verse.replace(/[’´]/g, "'");
                     verse = capitalizeFirstLetter(verse);
                     verse = replaceKeywords(verse);
                     verse = replaceParentheses(verse);
-                    verse = verse.replace(/\[(.*?)\]\((\d+)\)/g, function(match, p1, p2) {
-                        var innerText = p1.replace(/\[(.*?)\]\((\d+)\)|\[(\d+)\](?![\w\]])/g, function(innerMatch, p1, p2) {
+                    verse = verse.replace(/\[(.*?)\]\((\d+)\)/g, function (match, p1, p2) {
+                        var innerText = p1.replace(/\[(.*?)\]\((\d+)\)|\[(\d+)\](?![\w\]])/g, function (innerMatch, p1, p2) {
                             if (/(Verse|Chorus|Refrain|Bridge|Breakdown|Intro|Outro|Skit|Pre-Chorus|Post-Chorus|Instrumental Break)/.test(p1)) {
                                 return p1.replace(/\[|\]|\(|\)|\d+/g, '');
                             } else {
@@ -252,13 +241,13 @@
                         return '<span style="color: #063970;">[' + innerText + '](' + p2 + ')</span>';
                     });
 
-                    verse = verse.replace(/\[(.*?)\]\((\d+)\)|\[(\d+)\](?![\w\]])/g, function(match, p1, p2, p3) {
-                if (p1) {
-                    return p1;
-                } else if (p3) {
-                    return '';
-                }
-            });
+                    verse = verse.replace(/\[(.*?)\]\((\d+)\)|\[(\d+)\](?![\w\]])/g, function (match, p1, p2, p3) {
+                        if (p1) {
+                            return p1;
+                        } else if (p3) {
+                            return '';
+                        }
+                    });
                     verse = verse.replace(/\](\(\d+\))/g, '');
                     verse = verse.replace(/\[(?![^\[\]]*\])/g, '').replace(/(?<![^\[\]]*)\]/g, '');
 
@@ -270,35 +259,34 @@
 
                 previewActive = true;
             } else {
-                var inputText = document.getElementById("input").value;
                 var outputElement = document.getElementById("output");
-                outputElement.innerHTML = inputText;
+                outputElement.innerHTML = processText(originalText);
                 previewActive = false;
             }
         }
-        
+
         function replaceKeywords(verse) {
             var keywordsRegex = /(Verse|Chorus|Refrain|Bridge|Breakdown|Intro|Outro|Skit|Pre-Chorus|Post-Chorus|Instrumental Break)/g;
-            return verse.replace(keywordsRegex, function(match) {
+            return verse.replace(keywordsRegex, function (match) {
                 return match;
             });
         }
-        
+
         function replaceParentheses(verse) {
             var parenthesesRegex = /\((Verse|Chorus|Refrain|Bridge|Breakdown|Intro|Outro|Skit|Pre-Chorus|Post-Chorus|Instrumental Break)\)/g;
             return verse.replace(parenthesesRegex, '[$1]');
         }
 
         function copyText() {
-            var outputText = processedText;
-            if(outputText.trim() === "") {
+            var outputText = originalText;
+            if (outputText.trim() === "") {
                 alert("No lyrics to copy.");
                 return;
             }
             outputText = outputText.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
             var tempElement = document.createElement('textarea');
             tempElement.value = outputText;
-            tempElement.setAttribute('readonly', ''); 
+            tempElement.setAttribute('readonly', '');
             tempElement.style.position = 'absolute';
             tempElement.style.left = '-9999px';
             document.body.appendChild(tempElement);
@@ -311,16 +299,18 @@
 
         function clearText() {
             document.getElementById("input").value = "";
+            document.getElementById("output").innerHTML = "";
         }
-        
-function capitalizeFirstLetter(string) {
-    string = string.replace(/^\w/, function(match) {
-        return match.toUpperCase();
-    });
-    return string.replace(/(\[|\()(\w)/g, function(match, p1, p2) {
-        return p1 + p2.toUpperCase();
-    });
-}
+
+        function capitalizeFirstLetter(string) {
+            string = string.replace(/^\w/, function (match) {
+                return match.toUpperCase();
+            });
+            return string.replace(/(\[|\()(\w)/g, function (match, p1, p2) {
+                return p1 + p2.toUpperCase();
+            });
+        }
     </script>
 </body>
+
 </html>
