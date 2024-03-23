@@ -191,27 +191,27 @@
         var originalText = "";
         var processedText = "";
 
-        function processText(inputText) {
-            var processedText = inputText.split(/\r?\n/).map(function (verse) {
-                verse = verse.replace(/&[^;]*?;/gm, '');
-                verse = verse.replace(/[.,;]$/g, '');
-                if (/[а-яА-Я]/.test(verse)) {
-                    return "Cyrillic character found";
-                }
-                verse = verse.replace(/[’´]/g, "'");
-                verse = capitalizeFirstLetter(verse);
-                verse = replaceKeywords(verse);
-                verse = replaceParentheses(verse);
-                return verse;
-            }).join('\n');
-            processedText = processedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            return processedText;
+function processText(inputText) {
+    var processedText = inputText.split(/\r?\n/).map(function(line) {
+        line = line.replace(/&[^;]*?;/gm, '');
+        line = line.replace(/[.,;]$/g, '');
+        if (/[а-яА-Я]/.test(line)) {
+            return "Cyrillic character found";
         }
+        line = line.replace(/[’´‘‘]/g, "'");
+        line = capitalizeFirstLetter(line);
+        line = replaceKeywords(line);
+        line = replaceParentheses(line);
+        return line;
+    }).join('\n');
+    processedText = processedText.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return processedText;
+}
 
         function checkText() {
             var inputText = document.getElementById("input").value;
             originalText = inputText;
-            var processedText = processText(inputText);
+            processedText = processText(inputText);
             var outputElement = document.getElementById("output");
             outputElement.innerHTML = processedText;
         }
@@ -226,7 +226,7 @@
                 var outputText = inputText.trim().split('\n').map(function (verse) {
                     verse = verse.replace(/[.,;]$/g, '');
                     if (/[а-яА-Я]/.test(verse))
-                        verse = verse.replace(/[’´]/g, "'");
+                        verse = verse.replace(/[’´‘‘]/g, "'");
                     verse = capitalizeFirstLetter(verse);
                     verse = replaceKeywords(verse);
                     verse = replaceParentheses(verse);
@@ -278,7 +278,7 @@
         }
 
         function copyText() {
-            var outputText = originalText;
+            var outputText = processedText;
             if (outputText.trim() === "") {
                 alert("No lyrics to copy.");
                 return;
