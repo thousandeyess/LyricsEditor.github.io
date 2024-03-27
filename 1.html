@@ -229,9 +229,6 @@ function processText(inputText) {
     var processedText = inputText.split(/\r?\n/).map(function(line) {
         line = line.replace(/&[^;]*?;/gm, '');
         line = line.replace(/[.,;]$/g, '');
-        if (/[а-яА-Я]/.test(line)) {
-            return "Cyrillic character found";
-        }
         line = line.replace(/[’´‘‘]/g, "'");
         line = capitalizeFirstLetter(line);
         line = replaceKeywords(line);
